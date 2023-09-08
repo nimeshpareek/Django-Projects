@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TextUtils</title>
+</head>
+<body>
+
+{% comment %} <text>Welcome to text analyzer enter your text below</text> {% endcomment %}
+
+<h1>This is a Text Analyzer. Enter Your Text Below</h1>
+<form action = '/analyze' method = 'get'>
+<textarea name="text" rows="4" cols="50" style="width: 801px; height: 193px;"></textarea>
+<br>
+<input type="checkbox" name="removepunc"> Remove Punctuations<br>
+<button type="submit">Analyze Text</button>
+</body>
+</html>
