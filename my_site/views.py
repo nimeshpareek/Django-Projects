@@ -6,13 +6,16 @@ def index(request):
     return render(request, 'index.html')
 
 def analyze(request):
-    djtext = request.GET.get('text', 'default')
-    removepunc_button = request.GET.get('removepunc', 'off')
-    capital_button = request.GET.get('capitalizefirst','off')
-    newline_button = request.GET.get('newlineremover', 'off')
-    space_button = request.GET.get('spaceremover', 'off')
-    count_button = request.GET.get('charcounter', 'off')
+    djtext = request.POST.get('text', 'default')
+    removepunc_button = request.POST.get('removepunc', 'off')
+    capital_button = request.POST.get('capitalizefirst','off')
+    newline_button = request.POST.get('newlineremover', 'off')
+    space_button = request.POST.get('spaceremover', 'off')
+    count_button = request.POST.get('charcounter', 'off')
+    bool = False
     if removepunc_button == "on":
+        bool = True
+        x = 1
         punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
         analyzed = ""
         for x in djtext:
@@ -24,34 +27,45 @@ def analyze(request):
                 continue
             else:
                 analyzed += x
-        params = {'purpose': 'Remove Punctuations', 'analyzed_text': analyzed}
-        return render(request, 'analyze.html', params)
+        params = {'analyzed_text': analyzed}
+        djtext = analyzed
 
-    elif(capital_button == "on"):
+    if(capital_button == "on"):
+        bool = True
         djtext = djtext.upper()
-        params = {'purpose': 'UPPERCASE', 'analyzed_text': djtext}
-        return render(request, 'analyze.html', params)
-
-    elif(newline_button == "on"):
+        params = {'analyzed_text': djtext}
+        
+    if newline_button == "on":
+        bool = True
         newtext = ""
-        for x in djtext:
-            if x!="\n":
-                newtext += x
-        params = {'purpose': 'New Line Remove', 'analyzed_text': newtext}
-        return render(request, 'analyze.html', params)
+        for char in djtext:
+            if char != '\n' and char != '\r':
+                newtext += char
+        djtext = newtext  # Modify the djtext string directly
+        params = {'analyzed_text': djtext}
 
-    elif(space_button == "on"):
+    if(space_button == "on"):
+        bool = True
         newtext = ""
         for index, x in enumerate(djtext):
             if not(djtext[index] == " " and djtext[index+1] == " "):
                 newtext += x 
                 
-        params = {'purpose': 'Space remover', 'analyzed_text': newtext}
-        return render(request, 'analyze.html', params)
+        djtext = newtext
+        params = {'analyzed_text': djtext}
 
-    elif(count_button == "on"):
+    if(count_button == "on" and bool == False):
         size = len(djtext)
-        params = {'purpose': 'char count', 'analyzed_text': size}
-        return render(request, 'analyze.html', params)
-    else:
+        params = {'analyzed_text': size}
+    if(count_button == "on" and bool == True):
+        size = len(djtext)
+        txt = f" \n Your char size is {size}" 
+        djtext += txt
+        params = {'analyzed_text': djtext}
+        
+    if(count_button == "off" and space_button == "off" and newline_button == "off" and capital_button == "off" and removepunc_button == "off"):
         return HttpResponse("Please select an checkpoint")
+    print(djtext)
+    return render(request, 'analyze.html', params)
+    # else:
+        
